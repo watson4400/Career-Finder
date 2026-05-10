@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BW Career Engine v6</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@600;700&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&family=JetBrains+Mono:wght@400;500;700&display=swap');
+
+:root {
+--bg:#050c1a; --surf:#07101f; --card:#0b1628; --up:#0f1e38;
+--green:#00e87b; --glo:rgba(0,232,123,.08); --gmid:rgba(0,232,123,.18);
+--blue:#2b8fff;  --blo:rgba(43,143,255,.08); --bmid:rgba(43,143,255,.18);
+--amber:#f59e0b; --alo:rgba(245,158,11,.08);
+--red:#f43f5e;   --rlo:rgba(244,63,94,.1);
+--zr:#00c4b4; --ind:#60a5fa; --dc:#a78bfa;
+--tx:#dceeff; --txm:#7a99bf; --txl:#3d5570;
+--brd:rgba(43,143,255,.13); --brdg:rgba(0,232,123,.15); --brdh:rgba(43,143,255,.3);
+--fh:'Rajdhani',sans-serif; --fb:'DM Sans',sans-serif; --fm:'JetBrains Mono',monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--tx);font-family:var(--fb);min-height:100vh;font-size:14px;line-height:1.5;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;background-image:linear-gradient(rgba(43,143,255,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(43,143,255,.025) 1px,transparent 1px);background-size:44px 44px}
+.app{position:relative;z-index:1;display:grid;grid-template-columns:260px 1fr;min-height:100vh}
+.sb{background:var(--surf);border-right:1px solid var(--brd);padding:16px 13px;display:flex;flex-direction:column;gap:14px;overflow-y:auto;height:100vh;position:sticky;top:0}
+.logo{display:flex;align-items:center;gap:9px;margin-bottom:4px}
+.hex{width:32px;height:32px;flex-shrink:0;background:linear-gradient(135deg,var(--blue),var(--green));clip-path:polygon(50% 0%,100% 25%,100% 75%,50% 100%,0% 75%,0% 25%);display:flex;align-items:center;justify-content:center;font-family:var(--fh);font-weight:700;font-size:11px;color:var(--bg)}
+.logo-name{font-family:var(--fh);font-size:17px;font-weight:700;color:var(--tx);line-height:1}
+.logo-name em{color:var(--green);font-style:normal}
+.logo-sub{font-family:var(--fm);font-size:8px;letter-spacing:2px;text-transform:uppercase;color:var(--txl);margin-top:1px}
+.slbl{font-family:var(--fm);font-size:8px;letter-spacing:2.5px;text-transform:uppercase;color:var(--txl);display:flex;align-items:center;gap:8px;margin-bottom:7px}
+.slbl::after{content:'';flex:1;height:1px;background:var(--brd)}
+.profile{background:var(--card);border:1px solid var(--brdg);border-radius:11px;padding:12px;position:relative;overflow:hidden}
+.profile::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--blue),var(--green))}
+.pname{font-family:var(--fh);font-size:15px;font-weight:700;color:var(--tx);line-height:1;margin-top:3px}
+.prole{font-family:var(--fm);font-size:9px;color:var(--green);margin:3px 0 7px;line-height:1.4}
+.pdet{font-family:var(--fm);font-size:10px;color:var(--txm);line-height:1.7}
+.pills{display:flex;flex-wrap:wrap;gap:3px;margin-top:8px}
+.pill{font-family:var(--fm);font-size:9px;padding:2px 5px;border-radius:3px;background:var(--blo);border:1px solid rgba(43,143,255,.18);color:var(--blue)}
+.pill.g{background:var(--glo);border-color:rgba(0,232,123,.18);color:var(--green)}
+.sgg{display:grid;grid-template-columns:1fr 1fr;gap:4px}
+.sbox{background:var(--card);border:1px solid var(--brd);border-radius:8px;padding:7px;text-align:center}
+.sn{font-family:var(--fh);font-size:20px;font-weight:700;color:var(--green);line-height:1;transition:all .3s}
+.sn.b{color:var(--blue)}
+.sl{font-family:var(--fm);font-size:7px;letter-spacing:1px;text-transform:uppercase;color:var(--txl);margin-top:1px}
+.keybox{background:var(--card);border:1px solid var(--brd);border-radius:11px;padding:11px}
+label{display:block;font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--txl);margin-bottom:4px}
+input[type=password],input[type=text],select,textarea{width:100%;background:var(--bg);border:1px solid var(--brd);border-radius:5px;padding:7px 9px;font-family:var(--fm);font-size:11px;color:var(--tx);outline:none;transition:border-color .2s,box-shadow .2s;resize:vertical}
+input:focus,select:focus,textarea:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(43,143,255,.1)}
+input::placeholder,textarea::placeholder{color:var(--txl)}
+select option{background:var(--up)}
+.krow{display:flex;gap:4px;margin-top:6px}
+.guide{border:1px solid var(--brd);border-radius:9px;overflow:hidden}
+.guide-hdr{display:flex;align-items:center;justify-content:space-between;padding:8px 10px;cursor:pointer;background:var(--card);font-family:var(--fm);font-size:9px;color:var(--txm);user-select:none;transition:all .2s}
+.guide-hdr:hover{background:var(--up);color:var(--blue)}
+.garrow{transition:transform .25s}
+.guide-body{max-height:0;overflow:hidden;transition:max-height .3s ease;background:var(--bg)}
+.guide-body.open{max-height:280px}
+.ginner{padding:10px;border-top:1px solid var(--brd)}
+.gstep{display:flex;gap:8px;margin-bottom:7px;align-items:flex-start}
+.gnum{flex-shrink:0;width:16px;height:16px;border-radius:50%;background:linear-gradient(135deg,var(--blue),var(--green));display:flex;align-items:center;justify-content:center;font-family:var(--fh);font-size:9px;font-weight:700;color:var(--bg)}
+.gtxt{font-family:var(--fm);font-size:10px;color:var(--txm);line-height:1.6}
+.gtxt a{color:var(--blue);text-decoration:none}.gtxt a:hover{text-decoration:underline}
+.gtxt strong{color:var(--tx)}
+.gnote{font-family:var(--fm);font-size:9px;color:var(--txl);margin-top:8px;padding-top:7px;border-top:1px solid var(--brd);line-height:1.7}
+.snote{font-family:var(--fm);font-size:9px;color:var(--txl);text-align:center;line-height:1.8;padding:7px;border:1px dashed rgba(43,143,255,.1);border-radius:8px}
+.main{padding:18px;display:flex;flex-direction:column;gap:14px;min-width:0}
+.tabs{display:flex;gap:3px;border-bottom:1px solid var(--brd)}
+.tab{font-family:var(--fm);font-size:10px;letter-spacing:.3px;padding:7px 13px;cursor:pointer;border:1px solid transparent;border-bottom:none;border-radius:7px 7px 0 0;color:var(--txm);background:transparent;transition:all .2s;position:relative;top:1px}
+.tab:hover{color:var(--tx)}
+.tab.on{color:var(--blue);border-color:var(--brd);background:var(--card);border-bottom-color:var(--card)}
+.tab-panel{display:none;flex-direction:column;gap:14px}
+.tab-panel.on{display:flex}
+.panel{background:var(--card);border:1px solid var(--brd);border-radius:13px;padding:17px 19px}
+.ptitle{font-family:var(--fh);font-size:15px;font-weight:700;color:var(--tx);display:flex;align-items:center;gap:8px;margin-bottom:13px;flex-wrap:wrap}
+.badge{font-family:var(--fm);font-size:8px;letter-spacing:1.5px;padding:2px 7px;border-radius:20px;background:var(--glo);border:1px solid rgba(0,232,123,.25);color:var(--green)}
+.badge.b{background:var(--blo);border-color:rgba(43,143,255,.25);color:var(--blue)}
+.badge.r{background:var(--rlo);border-color:rgba(244,63,94,.25);color:var(--red)}
+.fg{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:8px;margin-bottom:12px}
+.fg2{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}
+.cr{display:flex;align-items:center;gap:6px;margin-bottom:10px;flex-wrap:wrap}
+.rlbl{font-family:var(--fm);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--txl)}
+.cbtn{font-family:var(--fm);font-size:9px;padding:4px 8px;border-radius:5px;border:1px solid var(--brd);background:transparent;color:var(--txl);cursor:pointer;transition:all .2s}
+.cbtn[data-on=true][data-c=high]{background:var(--glo);border-color:rgba(0,232,123,.35);color:var(--green)}
+.cbtn[data-on=true][data-c=med]{background:var(--blo);border-color:rgba(43,143,255,.35);color:var(--blue)}
+.cbtn[data-on=true][data-c=low]{background:var(--alo);border-color:rgba(245,158,11,.35);color:var(--amber)}
+.ar{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.plinks{display:flex;gap:6px;flex-wrap:wrap;margin-top:13px;padding-top:13px;border-top:1px solid var(--brd)}
+.plink{display:inline-flex;align-items:center;gap:5px;font-family:var(--fm);font-size:10px;padding:5px 10px;border-radius:6px;border:1px solid var(--brd);text-decoration:none;color:var(--txm);transition:all .2s}
+.plink:hover{transform:translateY(-1px)}
+.plink.zr{border-color:rgba(0,196,180,.35);color:var(--zr);background:rgba(0,196,180,.07)}
+.plink.ind{border-color:rgba(96,165,250,.35);color:var(--ind);background:rgba(96,165,250,.07)}
+.plink.dc{border-color:rgba(167,139,250,.35);color:var(--dc);background:rgba(167,139,250,.07)}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 15px;border-radius:8px;border:none;cursor:pointer;font-family:var(--fb);font-size:13px;font-weight:600;transition:all .2s;white-space:nowrap;position:relative}
+.btn:disabled{opacity:.35;cursor:not-allowed;transform:none!important}
+.btn-blue{background:linear-gradient(135deg,#2b8fff,#1a6fd4);color:#fff;box-shadow:0 2px 12px rgba(43,143,255,.2)}
+.btn-blue:not(:disabled):hover{transform:translateY(-1px);box-shadow:0 5px 16px rgba(43,143,255,.3)}
+.btn-green{background:linear-gradient(135deg,#00e87b,#00b85f);color:var(--bg);font-weight:700;box-shadow:0 2px 12px rgba(0,232,123,.16)}
+.btn-green:not(:disabled):hover{transform:translateY(-1px);box-shadow:0 5px 16px rgba(0,232,123,.26)}
+.btn-ghost{background:var(--up);color:var(--txm);border:1px solid var(--brd)}
+.btn-ghost:not(:disabled):hover{color:var(--tx);border-color:var(--brdh)}
+.btn-sm{padding:5px 10px;font-size:11px;border-radius:6px}
+.btn-amber{background:rgba(245,158,11,.12);color:var(--amber);border:1px solid rgba(245,158,11,.3)}
+.btn-amber:not(:disabled):hover{background:rgba(245,158,11,.2)}
+.btn.ld .btxt{opacity:0}
+.btn.ld::after{content:'';position:absolute;width:12px;height:12px;border:2px solid rgba(255,255,255,.2);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.diag{background:var(--up);border:1px solid rgba(245,158,11,.2);border-radius:11px;overflow:hidden}
+.diag-hdr{display:flex;align-items:center;justify-content:space-between;padding:8px 12px;cursor:pointer;font-family:var(--fm);font-size:10px;color:var(--amber);user-select:none;background:rgba(245,158,11,.04)}
+.diag-hdr:hover{background:rgba(245,158,11,.09)}
+.diag-body{padding:0;max-height:0;overflow:hidden;transition:max-height .3s ease}
+.diag-body.open{max-height:360px}
+.diag-inner{padding:11px;border-top:1px solid rgba(245,158,11,.15);display:flex;flex-direction:column;gap:8px}
+.diag-row{display:flex;flex-direction:column;gap:4px}
+.diag-row label{color:rgba(245,158,11,.7);font-size:8px}
+.diag-pre{background:var(--bg);border:1px solid var(--brd);border-radius:6px;padding:9px;font-family:var(--fm);font-size:10px;color:var(--txm);white-space:pre-wrap;word-break:break-all;max-height:150px;overflow-y:auto;line-height:1.5;margin:0}
+.log-line{padding:2px 0;font-family:var(--fm);font-size:10px;line-height:1.5}
+.log-line.ok{color:var(--green)}.log-line.err{color:var(--red)}.log-line.info{color:var(--blue)}.log-line.warn{color:var(--amber)}
+.reshdr{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:11px;flex-wrap:wrap}
+.restitle{font-family:var(--fh);font-size:15px;font-weight:700;color:var(--tx);display:flex;align-items:center;gap:7px}
+.rescnt{font-family:var(--fm);font-size:10px;background:var(--up);border:1px solid var(--brd);padding:2px 8px;border-radius:20px;color:var(--txm)}
+.sbrow{display:flex;gap:4px}
+.sbtn{font-family:var(--fm);font-size:9px;padding:3px 8px;border-radius:5px;border:1px solid var(--brd);background:transparent;color:var(--txl);cursor:pointer;transition:all .2s}
+.sbtn.on{color:var(--blue);border-color:rgba(43,143,255,.35);background:var(--blo)}
+.jgrid{display:flex;flex-direction:column;gap:8px}
+.jcard{background:var(--card);border:1px solid var(--brd);border-radius:12px;padding:13px 15px;position:relative;overflow:hidden;transition:all .2s;animation:cin .28s ease both}
+@keyframes cin{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.jcard::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;border-radius:12px 0 0 12px;background:var(--brd)}
+.jcard.high::before{background:linear-gradient(180deg,var(--green),#00b860)}
+.jcard.med::before{background:linear-gradient(180deg,var(--blue),#1a6fd4)}
+.jcard.low::before{background:linear-gradient(180deg,var(--amber),#d97706)}
+.jcard.high{border-color:rgba(0,232,123,.17)}
+.jcard.high:hover{border-color:rgba(0,232,123,.35);box-shadow:0 0 20px rgba(0,232,123,.06);transform:translateX(2px)}
+.jcard.med:hover{border-color:rgba(43,143,255,.3);box-shadow:0 0 20px rgba(43,143,255,.06);transform:translateX(2px)}
+.jcard.low:hover{border-color:rgba(245,158,11,.2);transform:translateX(2px)}
+.jctop{display:flex;align-items:flex-start;justify-content:space-between;gap:9px;margin-bottom:7px;flex-wrap:wrap}
+.jcmain{flex:1;min-width:0}
+.jctitle{font-family:var(--fh);font-size:15px;font-weight:700;color:var(--tx);margin-bottom:4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.jcmeta{display:flex;align-items:center;gap:7px;flex-wrap:wrap;font-family:var(--fm);font-size:10px;color:var(--txm)}
+.ptag{font-family:var(--fm);font-size:8px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;padding:2px 5px;border-radius:3px}
+.ptag.ZipRecruiter{background:rgba(0,196,180,.1);color:var(--zr);border:1px solid rgba(0,196,180,.2)}
+.ptag.Indeed{background:rgba(96,165,250,.1);color:var(--ind);border:1px solid rgba(96,165,250,.2)}
+.ptag.Dice{background:rgba(167,139,250,.1);color:var(--dc);border:1px solid rgba(167,139,250,.2)}
+.fitw{display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0}
+.fbadge{font-family:var(--fh);font-size:12px;font-weight:700;letter-spacing:.4px;padding:3px 9px;border-radius:6px}
+.fbadge.high{background:var(--glo);color:var(--green);border:1px solid rgba(0,232,123,.25)}
+.fbadge.med{background:var(--blo);color:var(--blue);border:1px solid rgba(43,143,255,.25)}
+.fbadge.low{background:var(--alo);color:var(--amber);border:1px solid rgba(245,158,11,.25)}
+.fbar{width:80px;height:3px;background:rgba(255,255,255,.05);border-radius:2px;overflow:hidden}
+.fbar-fill{height:100%;border-radius:2px;width:0;transition:width .8s cubic-bezier(.16,1,.3,1)}
+.high .fbar-fill{background:linear-gradient(90deg,var(--green),#00ff88)}
+.med .fbar-fill{background:linear-gradient(90deg,var(--blue),#60a5fa)}
+.low .fbar-fill{background:linear-gradient(90deg,var(--amber),#fbbf24)}
+.jcsum{font-size:12px;color:var(--txm);line-height:1.6;margin-bottom:7px}
+.skrow{display:flex;flex-wrap:wrap;gap:3px;margin-bottom:10px}
+.sc{font-family:var(--fm);font-size:9px;padding:2px 5px;border-radius:3px}
+.sc.m{background:var(--glo);border:1px solid rgba(0,232,123,.17);color:var(--green)}
+.sc.g{background:rgba(255,255,255,.02);border:1px solid var(--brd);color:var(--txl)}
+.sc.g::before{content:'− '}
+.jcfoot{display:flex;align-items:center;justify-content:space-between;gap:7px;flex-wrap:wrap}
+.sal{font-family:var(--fm);font-size:10px;padding:2px 7px;border-radius:4px;background:var(--up);border:1px solid var(--brd);color:var(--txl)}
+.sal.k{background:var(--glo);border-color:rgba(0,232,123,.18);color:var(--green)}
+.jcfr{display:flex;gap:4px;flex-wrap:wrap}
+.ba{font-family:var(--fm);font-size:10px;padding:4px 9px;border-radius:5px;cursor:pointer;transition:all .2s;border:none;text-decoration:none;display:inline-flex;align-items:center}
+.ba.find{background:var(--blo);border:1px solid rgba(43,143,255,.25);color:var(--blue)}
+.ba.find:hover{background:var(--bmid)}
+.ba.done{background:rgba(255,255,255,.02);border:1px solid var(--brd);color:var(--txl);cursor:default}
+.ba.cover{background:var(--up);border:1px solid var(--brd);color:var(--txm)}
+.ba.cover:hover{color:var(--tx);border-color:var(--brdh)}
+.ba.skip{background:transparent;border:1px solid transparent;color:var(--txl)}
+.ba.skip:hover{color:var(--red);border-color:rgba(244,63,94,.25)}
+.score-result{background:var(--up);border:1px solid var(--brd);border-radius:10px;padding:14px;display:none}
+.score-result.show{display:block}
+.score-top{display:flex;align-items:center;gap:12px;margin-bottom:10px;flex-wrap:wrap}
+.score-num{font-family:var(--fh);font-size:38px;font-weight:700;line-height:1}
+.score-num.high{color:var(--green)}.score-num.med{color:var(--blue)}.score-num.low{color:var(--amber)}
+.score-txt{font-size:12px;color:var(--txm);line-height:1.7}
+.tracker{background:var(--card);border:1px solid var(--brd);border-radius:13px;padding:15px 18px}
+.tlist{display:flex;flex-direction:column;gap:4px;margin-top:9px}
+.titem{display:flex;align-items:center;gap:7px;background:var(--up);border:1px solid var(--brd);border-radius:7px;padding:7px 10px;animation:cin .25s ease both}
+.ttitle{flex:1;font-size:12px;font-weight:500;color:var(--tx);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tmeta{font-family:var(--fm);font-size:9px;color:var(--txl);white-space:nowrap}
+.tlink{font-family:var(--fm);font-size:10px;color:var(--blue);text-decoration:none}
+.tlink:hover{text-decoration:underline}
+.tempty{font-family:var(--fm);font-size:11px;color:var(--txl);padding:8px 0;text-align:center}
+.empty{text-align:center;padding:50px 20px;display:flex;flex-direction:column;align-items:center;gap:9px}
+.et{font-family:var(--fh);font-size:17px;font-weight:700;color:var(--tx);opacity:.35}
+.eb{font-size:12px;color:var(--txl);max-width:340px;line-height:1.7}
+.moverlay{display:none;position:fixed;inset:0;z-index:500;background:rgba(5,12,26,.9);backdrop-filter:blur(12px);align-items:center;justify-content:center;padding:20px}
+.moverlay.open{display:flex}
+.modal{background:var(--card);border:1px solid var(--brdh);border-radius:15px;width:100%;max-width:640px;max-height:84vh;overflow-y:auto;padding:22px;position:relative;box-shadow:0 0 50px rgba(43,143,255,.1)}
+.modal::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--blue),var(--green));border-radius:15px 15px 0 0}
+.mtitle{font-family:var(--fh);font-size:16px;font-weight:700;color:var(--tx);margin-top:3px}
+.msub{font-family:var(--fm);font-size:10px;color:var(--txm);margin:2px 0 14px}
+.mbody{background:var(--bg);border:1px solid var(--brd);border-radius:8px;padding:13px;font-size:13px;line-height:1.75;color:var(--tx);white-space:pre-wrap;word-break:break-word;min-height:140px}
+.mbody.ld{font-family:var(--fm);color:var(--txl);font-size:11px}
+.mfoot{display:flex;justify-content:flex-end;gap:6px;margin-top:11px}
+.mclose{position:absolute;top:13px;right:13px;background:var(--up);border:1px solid var(--brd);color:var(--txm);width:25px;height:25px;border-radius:6px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:11px;transition:all .2s}
+.mclose:hover{color:var(--tx);border-color:var(--brdh)}
+.toast{position:fixed;bottom:16px;right:16px;z-index:999;background:var(--up);border:1px solid var(--brdg);border-radius:8px;padding:8px 13px;font-family:var(--fm);font-size:11px;color:var(--green);opacity:0;transform:translateY(5px);transition:all .22s;pointer-events:none}
+.toast.show{opacity:1;transform:translateY(0)}
+@media(max-width:900px){.app{grid-template-columns:1fr}.sb{height:auto;position:static;border-right:none;border-bottom:1px solid var(--brd)}.fg{grid-template-columns:1fr 1fr}}
+@media(max-width:540px){.main,.sb{padding:11px}.fg{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="app">
+<aside class="sb">
+  <div class="logo">
+    <div class="hex">BW</div>
+    <div>
+      <div class="logo-name">Career <em>Engine</em></div>
+      <div class="logo-sub">v6 · DIAGNOSTIC BUILD</div>
+    </div>
+  </div>
+  <div>
+    <div class="slbl">CANDIDATE</div>
+    <div class="profile">
+      <div class="pname">William (Bill) Watson</div>
+      <div class="prole">DIR. → VP ENGINEERING · TELECOM</div>
+      <div class="pdet">Austin, TX · 512.968.2438<br>Bill.watson@charter.com</div>
+      <div class="pills">
+        <span class="pill g">Telecom/ISP</span><span class="pill g">SD-WAN</span>
+        <span class="pill g">DWDM 10G–400G</span><span class="pill">Ericsson Granite</span>
+        <span class="pill">L1/L2/L3</span><span class="pill">MPLS</span>
+        <span class="pill">Managed Services</span><span class="pill">OSS/BSS</span>
+        <span class="pill g">P&amp;L $3.2B+</span><span class="pill">40+ Engineers</span>
+        <span class="pill">MBA</span><span class="pill">ITIL</span>
+      </div>
+    </div>
+  </div>
+  <div>
+    <div class="slbl">STATS</div>
+    <div class="sgg">
+      <div class="sbox"><div class="sn" id="stT">0</div><div class="sl">LEADS</div></div>
+      <div class="sbox"><div class="sn" id="stH">0</div><div class="sl">HIGH FIT</div></div>
+      <div class="sbox"><div class="sn b" id="stA">0</div><div class="sl">APPLIED</div></div>
+      <div class="sbox"><div class="sn b" id="stS">0</div><div class="sl">SCORED</div></div>
+    </div>
+  </div>
+  <div>
+    <div class="slbl">API KEY</div>
+    <div class="keybox">
+      <label>PASTE ONCE — SAVED PERMANENTLY IN THIS BROWSER</label>
+      <input type="password" id="keyIn" placeholder="sk-ant-api03-..." autocomplete="off"/>
+      <div style="margin-top:6px">
+        <label>MODEL</label>
+        <select id="modelSel">
+          <option value="claude-sonnet-4-6">claude-sonnet-4-6 (recommended)</option>
+          <option value="claude-opus-4-6">claude-opus-4-6</option>
+          <option value="claude-3-5-sonnet-20241022">claude-3-5-sonnet-20241022 (fallback)</option>
+          <option value="claude-3-5-haiku-20241022">claude-3-5-haiku-20241022 (fast/cheap)</option>
+        </select>
+      </div>
+      <div class="krow">
+        <button class="btn btn-ghost btn-sm" onclick="saveKey()">💾 Save</button>
+        <button class="btn btn-ghost btn-sm" onclick="testKey(this)">🔌 Test</button>
+        <button class="btn btn-ghost btn-sm" onclick="clearKey()">✕</button>
+      </div>
+    </div>
+  </div>
+  <div>
+    <div class="slbl">GET API KEY</div>
+    <div class="guide">
+      <div class="guide-hdr" onclick="toggleGuide()"><span>❓ Step-by-step</span><span class="garrow" id="garrow">▼</span></div>
+      <div class="guide-body" id="gbody">
+        <div class="ginner">
+          <div class="gstep"><div class="gnum">1</div><div class="gtxt">Go to <a href="https://console.anthropic.com" target="_blank" rel="noopener">console.anthropic.com</a></div></div>
+          <div class="gstep"><div class="gnum">2</div><div class="gtxt">Left sidebar → <strong>API Keys</strong> → <strong>+ Create Key</strong></div></div>
+          <div class="gstep"><div class="gnum">3</div><div class="gtxt">Copy the key → paste above → <strong>💾 Save</strong></div></div>
+          <div class="gstep"><div class="gnum">4</div><div class="gtxt">Click <strong>🔌 Test</strong> — must turn green before searching</div></div>
+          <div class="gstep"><div class="gnum">5</div><div class="gtxt"><strong>Billing</strong> → Add $5–10 credits</div></div>
+          <div class="gnote">✓ Stored only in this browser<br>✓ Sent only to api.anthropic.com<br>✓ Never expires unless cleared</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="snote">⚡ "Find &amp; Apply" searches for real listings.<br>You submit the form. Nothing else stored.</div>
+</aside>
+<main class="main">
+  <div class="tabs">
+    <button class="tab on" onclick="switchTab('search',this)">🔍 Job Intelligence</button>
+    <button class="tab" onclick="switchTab('score',this)">📋 Paste &amp; Score</button>
+    <button class="tab" onclick="switchTab('tracker',this)">📁 Tracker</button>
+  </div>
+  <div class="tab-panel on" id="tab-search">
+    <div class="panel">
+      <div class="ptitle">AI Job Intelligence <span class="badge">KNOWLEDGE BASE</span></div>
+      <div class="fg">
+        <div><label>TARGET ROLES / KEYWORDS</label><input type="text" id="kwIn" value="VP Engineering Director Network Service Design Telecom"></div>
+        <div><label>LOCATION</label><input type="text" id="locIn" value="Austin, TX"></div>
+        <div><label>TYPE</label><select id="typeIn"><option value="full-time">Full-time</option><option value="contract">Contract</option><option value="full-time or contract">Both</option></select></div>
+        <div><label>SETTING</label><select id="remIn"><option value="any location">Any</option><option value="remote">Remote</option><option value="hybrid">Hybrid</option><option value="on-site">On-site</option></select></div>
+      </div>
+      <div class="cr">
+        <span class="rlbl">SHOW</span>
+        <button class="cbtn" data-c="high" data-on="true" onclick="toggleConf(this)">● High Fit</button>
+        <button class="cbtn" data-c="med" data-on="true" onclick="toggleConf(this)">● Medium Fit</button>
+        <button class="cbtn" data-c="low" data-on="false" onclick="toggleConf(this)">○ Low Fit</button>
+      </div>
+      <div class="ar">
+        <button class="btn btn-blue" id="genBtn" onclick="generateLeads()"><span class="btxt">⚡ Generate Leads</span></button>
+        <button class="btn btn-green" id="batchBtn" onclick="batchOpen()" disabled><span class="btxt">🚀 Open All High-Fit</span></button>
+        <button class="btn btn-ghost btn-sm" onclick="resetSearch()">↺</button>
+      </div>
+      <div class="plinks">
+        <a class="plink zr" id="lkZR" href="#" target="_blank" rel="noopener">● ZipRecruiter</a>
+        <a class="plink ind" id="lkIN" href="#" target="_blank" rel="noopener">● Indeed</a>
+        <a class="plink dc" id="lkDC" href="#" target="_blank" rel="noopener">● Dice</a>
+        <span style="font-family:var(--fm);font-size:9px;color:var(--txl);align-self:center">Open real listings directly</span>
+      </div>
+    </div>
+    <div class="diag" id="diagPanel">
+      <div class="diag-hdr" onclick="toggleDiag()"><span>🔬 Live Diagnostic — <span id="diagStatus">No call made yet</span></span><span id="diagArrow">▼</span></div>
+      <div class="diag-body open" id="diagBody">
+        <div class="diag-inner">
+          <div class="diag-row"><label>CALL LOG</label><div class="diag-pre" id="diagLog">Waiting for first API call...</div></div>
+          <div class="diag-row"><label>RAW API RESPONSE (FIRST 800 CHARS)</label><pre class="diag-pre" id="diagRaw">—</pre></div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="reshdr">
+        <div class="restitle">Leads <span class="rescnt" id="resCnt">0</span></div>
+        <div class="sbrow">
+          <button class="sbtn on" id="sb-fit" onclick="setSort('fit')">↓ Fit</button>
+          <button class="sbtn" id="sb-co" onclick="setSort('co')">Co.</button>
+          <button class="sbtn" id="sb-plat" onclick="setSort('plat')">Platform</button>
+        </div>
+      </div>
+      <div id="resultsArea">
+        <div class="empty">
+          <svg width="64" height="64" viewBox="0 0 64 64" fill="none" style="opacity:.1;margin-bottom:6px"><circle cx="32" cy="32" r="30" stroke="#2b8fff" stroke-width="1.5" stroke-dasharray="5 3"/><circle cx="32" cy="32" r="18" stroke="#00e87b" stroke-width="1" opacity=".7"/><line x1="45" y1="45" x2="58" y2="58" stroke="#2b8fff" stroke-width="2.5" stroke-linecap="round"/><circle cx="32" cy="32" r="3" fill="#00e87b"/></svg>
+          <div class="et">Ready</div>
+          <div class="eb">Save your key → click 🔌 Test (must go green) → click ⚡ Generate Leads. The diagnostic panel above shows exactly what the API returns.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="tab-panel" id="tab-score">
+    <div class="panel">
+      <div class="ptitle">Paste &amp; Score Any Job <span class="badge">ALWAYS WORKS</span></div>
+      <p style="font-size:12px;color:var(--txm);margin-bottom:12px;line-height:1.6">Find any listing on ZipRecruiter, Indeed, or Dice. Copy the full text. Paste below. Instant AI score against your resume.</p>
+      <div class="fg2">
+        <div><label>Job Title (optional)</label><input type="text" id="pTitle" placeholder="VP of Network Engineering"></div>
+        <div><label>Company (optional)</label><input type="text" id="pCo" placeholder="AT&amp;T, Lumen, Zayo…"></div>
+      </div>
+      <div style="margin-bottom:11px">
+        <label>Full job description *</label>
+        <textarea id="pJD" rows="7" placeholder="Paste the complete job description text here…"></textarea>
+      </div>
+      <div class="ar">
+        <button class="btn btn-blue" id="scoreBtn" onclick="scoreJob()"><span class="btxt">⚡ Score This Job</span></button>
+        <button class="btn btn-ghost btn-sm" onclick="clearScore()">Clear</button>
+      </div>
+    </div>
+    <div class="score-result" id="scoreResult">
+      <div class="score-top">
+        <div class="score-num" id="scoreNum">—</div>
+        <div>
+          <div class="fbadge" id="scoreBadge" style="margin-bottom:5px">—</div>
+          <div style="font-family:var(--fm);font-size:10px;color:var(--txm)" id="scoreJobTitle">—</div>
+        </div>
+      </div>
+      <div class="score-txt" id="scoreTxt"></div>
+      <div style="margin-top:11px;padding-top:11px;border-top:1px solid var(--brd);display:flex;gap:6px;flex-wrap:wrap">
+        <button class="ba cover" style="padding:6px 12px" onclick="scoreGenCover()">✍ Cover Letter</button>
+        <button class="ba find" style="padding:6px 12px" onclick="trackScored()">📁 Track This</button>
+      </div>
+    </div>
+    <div class="diag" id="diagScore" style="display:none">
+      <div class="diag-hdr" onclick="toggleDiagScore()"><span>🔬 Score Diagnostic</span><span id="diagScoreArrow">▼</span></div>
+      <div class="diag-body" id="diagScoreBody">
+        <div class="diag-inner">
+          <div class="diag-row"><label>Raw Score Response</label><pre class="diag-pre" id="diagScoreRaw">—</pre></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="tab-panel" id="tab-tracker">
+    <div class="tracker">
+      <div class="reshdr">
+        <div class="restitle">Application Tracker <span class="rescnt" id="trkCnt">0</span></div>
+        <button class="btn btn-ghost btn-sm" onclick="clearTracker()">Clear All</button>
+      </div>
+      <div class="tlist" id="trkList"><div class="tempty">No applications tracked yet.</div></div>
+    </div>
+  </div>
+</main>
+</div>
+<div class="moverlay" id="coverModal">
+  <div class="modal">
+    <button class="mclose" onclick="closeModal()">✕</button>
+    <div class="mtitle" id="mtitle">Cover Letter</div>
+    <div class="msub" id="msub"></div>
+    <div class="mbody" id="mbody">Generating…</div>
+    <div class="mfoot">
+      <button class="btn btn-ghost btn-sm" onclick="closeModal()">Close</button>
+      <button class="btn btn-blue btn-sm" onclick="copyModal()">📋 Copy</button>
+    </div>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+const R={name:"William (Bill) Watson",target:"VP Engineering | VP Network Design | VP Service Delivery | Director Engineering | Director Network Services",summary:`Transformational engineering executive. 13+ years Spectrum/Charter Communications (Tier 1 telecom). $3.2B+ annual service design throughput. Six-team 40+ engineer org built from zero. 19% delivery cycle-time improvement (37→30 days). $1.2M+ asset recovery via network resource audit. Full operationalization of ENE, MNE, Hosted Voice, Hospitality, Wi-Fi, Unified Comms. P&L accountability. OKR/KPI frameworks. Direct VP/C-level reporting.`,skills:`Ericsson Granite/EAI, L1/L2/L3 Network Modeling, VLAN/IP Management, Ethernet MEF, DWDM 10G–400G, MPLS, SD-WAN, Hosted Voice/UC, Wi-Fi Architecture, Salesforce, OSS/BSS Integration, JIRA, Confluence, Tableau, P&L Accountability, Engineering Org Leadership, KPI/OKR, Executive Reporting, Vendor Management, Strategic Planning, Workforce Development, Telecom/ISP, Carrier-Grade Ethernet, Cell Tower Backhaul, Wholesale Internet/Ethernet, Managed Network Services`,edu:"MBA (2023) + MS Management & Leadership (2020) + BS Business Management (2019) — WGU",certs:"ITIL Foundation (2015), ITIL Service Lifecycle (2016), CompTIA Project+ (2016)",bullets:["$3.2B+ annual service design throughput — Spectrum/Charter (Tier 1 telecom)","6-team / 40+ engineer org built from zero to full operational maturity","19% delivery cycle-time reduction (37→30 days, 2,500+ orders/yr)","$1.2M+ recovered via proactive network resource audit","Operationalized ENE, MNE, Hosted Voice, Wi-Fi, Hospitality, UC — business case through field readiness","MBA + MS Management & Leadership + ITIL + CompTIA Project+","13 years Spectrum/Charter — direct VP/C-level accountability"]};
+let jobs=[],hiddenIds=new Set(),appliedIds=new Set(),tracker={};let showFit={high:true,med:true,low:false},sortMode='fit',scoredJob=null;
+window.addEventListener('DOMContentLoaded',()=>{const k=localStorage.getItem('cie_key');if(k){document.getElementById('keyIn').value=k;setStatus('ready')}const m=localStorage.getItem('cie_model');if(m){const sel=document.getElementById('modelSel');if([...sel.options].some(o=>o.value===m))sel.value=m}appliedIds=new Set(JSON.parse(localStorage.getItem('cie_applied')||'[]'));hiddenIds=new Set(JSON.parse(localStorage.getItem('cie_hidden')||'[]'));tracker=JSON.parse(localStorage.getItem('cie_tracker')||'{}');renderTracker();updStats();refreshLinks();['kwIn','locIn'].forEach(id=>{document.getElementById(id)?.addEventListener('input',refreshLinks);});});
+function getKey(){return localStorage.getItem('cie_key')||document.getElementById('keyIn').value.trim()}
+function getModel(){const v=document.getElementById('modelSel').value;localStorage.setItem('cie_model',v);return v}
+function saveKey(){const k=document.getElementById('keyIn').value.trim();if(!k){toast('Paste your key first');return}localStorage.setItem('cie_key',k);setStatus('ready');toast('Key saved permanently')}
+async function testKey(btn){const k=getKey();if(!k){toast('Enter a key first');return}const m=getModel();btn.disabled=true;btn.textContent='…';dlog('info',`Testing key with model: ${m}`);try{const resp=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':k,'anthropic-version':'2023-06-01'},body:JSON.stringify({model:m,max_tokens:10,messages:[{role:'user',content:'say ok'}]})});const raw=await resp.text();dlog('info',`HTTP ${resp.status}`);dlog(resp.ok?'ok':'err',`Response: ${raw.slice(0,200)}`);document.getElementById('diagRaw').textContent=raw.slice(0,800);if(resp.ok){setStatus('ready');toast('✓ Key and model both valid')}else{setStatus('err');const e=safeJson(raw);toast('✗ '+fmtErr(resp.status,e))}}catch(e){setStatus('err');dlog('err','Network error: '+e.message);toast('✗ Network error: '+e.message+' — check internet connection')}finally{btn.disabled=false;btn.textContent='🔌 Test'}}
+function clearKey(){localStorage.removeItem('cie_key');document.getElementById('keyIn').value='';setStatus('off');toast('Cleared')}
+function setStatus(s){dlog(s==='ready'?'ok':s==='err'?'err':'info','API Status: '+s)}
+function refreshLinks(){const kw=encodeURIComponent(document.getElementById('kwIn')?.value||'VP Engineering Telecom');const loc=encodeURIComponent(document.getElementById('locIn')?.value||'Austin TX');document.getElementById('lkZR').href=`https://www.ziprecruiter.com/jobs-search?search=${kw}&location=${loc}`;document.getElementById('lkIN').href=`https://www.indeed.com/jobs?q=${kw}&l=${loc}`;document.getElementById('lkDC').href=`https://www.dice.com/jobs?q=${kw}&location=${loc}`;}
+function switchTab(id,btn){document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('on'));document.querySelectorAll('.tab').forEach(b=>b.classList.remove('on'));document.getElementById('tab-'+id).classList.add('on');btn.classList.add('on')}
+function toggleConf(btn){const c=btn.dataset.c,on=btn.dataset.on!=='true';btn.dataset.on=String(on);btn.textContent=(on?'● ':'○ ')+(c==='high'?'High Fit':c==='med'?'Medium Fit':'Low Fit');showFit[c]=on;renderResults()}
+function toggleGuide(){const b=document.getElementById('gbody'),a=document.getElementById('garrow');b.classList.toggle('open');a.style.transform=b.classList.contains('open')?'rotate(180deg)':''}
+function toggleDiag(){const b=document.getElementById('diagBody'),a=document.getElementById('diagArrow');b.classList.toggle('open');a.textContent=b.classList.contains('open')?'▲':'▼'}
+function toggleDiagScore(){const b=document.getElementById('diagScoreBody'),a=document.getElementById('diagScoreArrow');b.classList.toggle('open');a.textContent=b.classList.contains('open')?'▲':'▼'}
+function dlog(type,msg){const log=document.getElementById('diagLog');const d=document.createElement('div');d.className='log-line '+type;d.textContent=`[${new Date().toLocaleTimeString()}] ${msg}`;log.appendChild(d);log.scrollTop=log.scrollHeight;document.getElementById('diagStatus').textContent=msg.slice(0,60);console[type==='err'?'error':'log']('[CIE]',msg)}
+function dlogRaw(text){document.getElementById('diagRaw').textContent=text?text.slice(0,800):'(empty)'}
+function safeJson(text){try{return JSON.parse(text)}catch{return {}}}
+function fmtErr(status,data){const m=data?.error?.message||data?.message||'';if(status===401)return'Invalid API key — check console.anthropic.com → API Keys';if(status===403)return`Model access denied: ${m||'key may not have access to this model — try claude-3-5-sonnet-20241022'}`;if(status===404)return`Model not found: ${m||'try a different model in the dropdown'}`;if(status===429)return'Rate limited — wait 30 seconds and retry';if(status===400)return`Bad request: ${m}`;if(status===500||status===529)return`Anthropic server error (${status}) — retry in 60 seconds`;return`HTTP ${status}: ${m||JSON.stringify(data).slice(0,100)}`}
+function parseArr(text){if(!text)return null;text=text.replace(/```json\s*/gi,'').replace(/```\s*/g,'').trim();const s=text.indexOf('[');if(s<0)return null;let d=0;for(let i=s;i<text.length;i++){const c=text[i];if(c==='['||c==='{')d++;else if(c===']'||c==='}'){d--;if(d===0&&c===']'){try{const a=JSON.parse(text.slice(s,i+1));return Array.isArray(a)?a:null}catch{return null}}}}return null}
+function normFit(lv,sc){const l=(lv||'').toLowerCase();if(l==='high')return'high';if(l==='med'||l==='medium')return'med';if(l==='low')return'low';const s=Number(sc)||0;return s>=75?'high':s>=50?'med':'low'}
+function normPlat(p){if(!p)return'Indeed';const l=p.toLowerCase();if(l.includes('zip'))return'ZipRecruiter';if(l.includes('dice'))return'Dice';return'Indeed'}
+function searchUrl(platform,title,company,loc){const q=encodeURIComponent(`"${title}" ${company}`);const l=encodeURIComponent(loc||'');if(platform==='ZipRecruiter')return`https://www.ziprecruiter.com/jobs-search?search=${q}&location=${l}`;if(platform==='Dice')return`https://www.dice.com/jobs?q=${q}&location=${l}`;return `https://www.indeed.com/jobs?q=${q}&l=${l}`;}
+async function generateLeads(){const key=getKey();if(!key){dlog('err','No API key — enter and save your key first');toast('Enter and save your API key first');return}const model=getModel();const kw=document.getElementById('kwIn').value.trim();const loc=document.getElementById('locIn').value.trim();const type=document.getElementById('typeIn').value;const rem=document.getElementById('remIn').value;const btn=document.getElementById('genBtn');btn.classList.add('ld');btn.disabled=true;document.getElementById('batchBtn').disabled=true;document.getElementById('diagLog').innerHTML='';dlog('info',`Model: ${model}`);dlog('info',`Query: "${kw}" | ${loc} | ${type} | ${rem}`);dlog('info','Sending request to api.anthropic.com...');showLoading();const sys=`You are an executive recruiter. Generate realistic VP/Director engineering job leads. You MUST return ONLY a raw JSON array with no text before [ and no text after ]. No markdown. No explanation. No code fences. Start immediately with [ and end with ].`;const prompt=`Generate 10 ${type} executive job leads for "${kw}" roles in ${loc} (${rem}).
+
+Candidate profile:
+- ${R.summary}
+- Skills: ${R.skills}
+- ${R.edu}
+- ${R.certs}
+
+Use real company names. Include: AT&T, Verizon, Comcast, Lumen Technologies, T-Mobile, Cox, Zayo, Windstream, Nokia, Ericsson, Ciena, Juniper Networks, Cisco, IBM, HPE, Accenture, Deloitte.
+
+JSON array. Each element:
+{"id":"j1","platform":"ZipRecruiter","title":"VP Network Engineering","company":"Lumen Technologies","location":"Austin, TX","salary":"$170,000 - $215,000","fitScore":88,"fitLevel":"high","matchedSkills":["MPLS","Managed Services","Engineering Org Leadership"],"missingSkills":[],"summary":"VP role leading 60-person network engineering org at Tier 1 carrier. Strong match on telecom background and P&L scope."}
+
+Platforms: rotate evenly among ZipRecruiter, Indeed, Dice.
+fitLevel: high (75-100) = VP/Director + telecom/network domain + org leadership. med (50-74) = related. low = weak.
+
+Return ONLY the JSON array starting with [.`;
+let rawText='';try{let resp;try{resp=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01'},body:JSON.stringify({model,max_tokens:5000,system:sys,messages:[{role:'user',content:prompt}]})})}catch(netErr){dlog('err','NETWORK ERROR: '+netErr.message);dlog('warn','Possible causes: no internet, browser blocking the request, or CORS issue');showErr('Network error: '+netErr.message);return} dlog(resp.ok?'ok':'err',`HTTP ${resp.status} ${resp.statusText}`);rawText=await resp.text();dlogRaw(rawText);const data=safeJson(rawText);if(!resp.ok){const msg=fmtErr(resp.status,data);dlog('err','API ERROR: '+msg);showErr(msg+'\n\nSee diagnostic panel above for full response.');return}dlog('ok','HTTP 200 — processing response...');const blocks=(data.content||[]).filter(b=>b.type==='text').map(b=>b.text);dlog('info',`Content blocks: ${blocks.length}, stop_reason: ${data.stop_reason}`);if(!blocks.length){dlog('err','No text content blocks in response');showErr('API returned a 200 but with no text content. See diagnostic for raw response.');return}const text=blocks.join('').trim();dlog('info',`Text length: ${text.length} chars, starts with: "${text.slice(0,30)}"`);const parsed=parseArr(text);if(!parsed||!parsed.length){dlog('err','Could not parse JSON array from response text');dlog('warn',`Text starts with: ${text.slice(0,100)}`);showErr('Response was not a valid JSON array. Check diagnostic panel — it shows the raw response so we can diagnose the issue.');showEmpty();return}dlog('ok',`Parsed ${parsed.length} jobs successfully`);jobs=parsed.map((j,i)=>({...j,id:j.id||'j'+i,fitLevel:normFit(j.fitLevel,j.fitScore),fitScore:Number(j.fitScore)||50,platform:normPlat(j.platform),applyUrl:'',sUrl:searchUrl(normPlat(j.platform),j.title||'',j.company||'',loc)}));renderResults();updStats();const high=jobs.filter(j=>j.fitLevel==='high').length;document.getElementById('batchBtn').disabled=high===0;dlog('ok',`Done. ${jobs.length} leads · ${high} high fit`);toast(`${jobs.length} leads · ${high} high fit`)}catch(err){dlog('err','UNEXPECTED ERROR: '+err.message);dlog('warn','Raw response was: '+rawText.slice(0,200));showErr('Unexpected error: '+err.message);showEmpty()}finally{btn.classList.remove('ld');btn.disabled=false}}
+function renderResults(){const area=document.getElementById('resultsArea');let vis=jobs.filter(j=>{if(hiddenIds.has(j.id))return false;if(j.fitLevel==='high'&&!showFit.high)return false;if(j.fitLevel==='med'&&!showFit.med)return false;if(j.fitLevel==='low'&&!showFit.low)return false;return true});if(sortMode==='fit')vis.sort((a,b)=>b.fitScore-a.fitScore);if(sortMode==='co')vis.sort((a,b)=>(a.company||'').localeCompare(b.company||''));if(sortMode==='plat')vis.sort((a,b)=>(a.platform||'').localeCompare(b.platform||''));document.getElementById('resCnt').textContent=vis.length;if(!vis.length&&jobs.length){area.innerHTML='<div class="empty"><div class="et">All Hidden</div><div class="eb">Adjust confidence filters or reset.</div></div>';return}if(!vis.length)return;area.innerHTML=`<div class="jgrid">${vis.map((j,i)=>jCard(j,i)).join('')}</div>`;requestAnimationFrame(()=>document.querySelectorAll('.fbar-fill').forEach(b=>{b.style.width=b.dataset.w+'%'}))}
+function jCard(j,i){const applied=appliedIds.has(j.id);const lbl=j.fitLevel==='high'?`HIGH·${j.fitScore}%`:j.fitLevel==='med'?`MED·${j.fitScore}%`:`LOW·${j.fitScore}%`;const mT=(j.matchedSkills||[]).slice(0,5).map(s=>`<span class="sc m">${s}</span>`).join('');const gT=(j.missingSkills||[]).slice(0,3).map(s=>`<span class="sc g">${s}</span>`).join('');const url=j.sUrl||'';const delay=Math.min(i*30,220);return `<div class="jcard ${j.fitLevel}" data-id="${j.id}" style="animation-delay:${delay}ms"><div class="jctop"><div class="jcmain"><div class="jctitle" title="${(j.title||'').replace(/"/g,"'")}">${j.title||'Untitled'}</div><div class="jcmeta"><span class="ptag ${j.platform}">${j.platform}</span><span>🏢 ${j.company||'?'}</span><span>📍 ${j.location||'TBD'}</span></div></div><div class="fitw"><div class="fbadge ${j.fitLevel}">${lbl}</div><div class="fbar"><div class="fbar-fill" style="width:0" data-w="${j.fitScore}"></div></div></div></div>${j.summary?`<div class="jcsum">${j.summary}</div>`:''}<div class="skrow">${mT}${gT?`<span class="sc g" style="opacity:.3;font-size:8px">GAPS:</span>${gT}`:''}</div><div class="jcfoot"><span class="sal ${j.salary?'k':''}">${j.salary||'Salary varies'}</span><div class="jcfr"><button class="ba skip" onclick="hideJob('${j.id}')">✕</button><button class="ba cover" onclick="genCover('${j.id}')">✍</button>${applied?`<button class="ba done" disabled>✓ Applied</button>`:`<a class="ba find" href="${url}" target="_blank" rel="noopener" onclick="markApplied('${j.id}')">🔍 Find &amp; Apply</a>`}</div></div></div>`}
+function showLoading(){document.getElementById('resultsArea').innerHTML=`<div class="empty"><div style="width:38px;height:38px;border:2px solid var(--up);border-top-color:var(--blue);border-right-color:var(--green);border-radius:50%;animation:spin .9s linear infinite;margin-bottom:8px"></div><div class="et" style="font-size:13px;opacity:.6">Generating leads…</div><div class="eb">Usually 5–10 seconds. Watch the diagnostic panel above for real-time status.</div></div>`}
+function showEmpty(){document.getElementById('resultsArea').innerHTML=`<div class="empty"><div class="et">Generation failed</div><div class="eb">See the diagnostic panel above — it shows the exact HTTP status and raw API response so we can pinpoint the problem.</div></div>`}
+function showErr(msg){dlog('err',msg);toast('⚠ '+msg.slice(0,80))}
+function markApplied(id){setTimeout(()=>{if(appliedIds.has(id))return;appliedIds.add(id);localStorage.setItem('cie_applied',JSON.stringify([...appliedIds]));const j=jobs.find(x=>x.id===id);if(j){tracker[id]={title:j.title,company:j.company,platform:j.platform,url:j.sUrl||'',date:new Date().toLocaleDateString()};localStorage.setItem('cie_tracker',JSON.stringify(tracker));prependTracker(tracker[id])}const a=document.querySelector(`.jcard[data-id="${id}"] .ba.find`);if(a){const b=document.createElement('button');b.className='ba done';b.disabled=true;b.textContent='✓ Applied';a.replaceWith(b)}updStats();toast(`Tracked: ${j?.title||'Job'}`)},200)}
+function batchOpen(){const t=jobs.filter(j=>j.fitLevel==='high'&&!appliedIds.has(j.id)&&!hiddenIds.has(j.id));if(!t.length){toast('No unapplied high-fit leads.');return}t.forEach((j,i)=>setTimeout(()=>{if(j.sUrl)window.open(j.sUrl,'_blank','noopener,noreferrer');markApplied(j.id)},i*500));toast(`Opening ${t.length} search${t.length!==1?'es':''}…`)}
+function hideJob(id){hiddenIds.add(id);localStorage.setItem('cie_hidden',JSON.stringify([...hiddenIds]));const c=document.querySelector(`.jcard[data-id="${id}"]`);if(c){c.style.opacity='0';c.style.transform='translateX(-14px)';setTimeout(()=>c.remove(),200)}updStats()}
+async function scoreJob(){const key=getKey();if(!key){toast('Enter API key first');return}const jd=document.getElementById('pJD').value.trim();if(jd.length<40){toast('Paste a full job description first');return}const title=document.getElementById('pTitle').value.trim()||'Unknown Role';const co=document.getElementById('pCo').value.trim()||'Unknown Company';const model=getModel();const btn=document.getElementById('scoreBtn');btn.classList.add('ld');btn.disabled=true;document.getElementById('scoreResult').classList.remove('show');document.getElementById('diagScore').style.display='none';try{const resp=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01'},body:JSON.stringify({model,max_tokens:600,system:`Score a job against a candidate. Return ONLY raw JSON object starting with { ending with }. No prose, no markdown.`,messages:[{role:'user',content:`JOB: ${title} at ${co}
+DESCRIPTION: ${jd.slice(0,2500)}
+CANDIDATE: ${R.summary} Skills: ${R.skills}
+Return: {"fitScore":82,"fitLevel":"high","matchedSkills":["s1","s2"],"missingSkills":["s"],"analysis":"2-3 sentences specific fit assessment","recommendation":"Apply immediately|Strong consideration|Review carefully|Skip"}`}]})});const raw=await resp.text();document.getElementById('diagScoreRaw').textContent=raw.slice(0,800);document.getElementById('diagScore').style.display='block';document.getElementById('diagScoreBody').classList.add('open');if(!resp.ok){toast('Score API error: '+fmtErr(resp.status,safeJson(raw)));return}const data=safeJson(raw);const text=(data.content||[]).filter(b=>b.type==='text').map(b=>b.text).join('').trim();const cleaned=text.replace(/```json\s*/gi,'').replace(/```\s*/g,'').trim();const s=cleaned.indexOf('{'),e=cleaned.lastIndexOf('}');let r;if(s>=0&&e>s){try{r=JSON.parse(cleaned.slice(s,e+1))}catch{}}if(!r){toast('Could not parse score response — see diagnostic');return}const fl=normFit(r.fitLevel,r.fitScore);document.getElementById('scoreNum').textContent=(r.fitScore||0)+'%';document.getElementById('scoreNum').className='score-num '+fl;document.getElementById('scoreBadge').textContent=fl.toUpperCase();document.getElementById('scoreBadge').className='fbadge '+fl;document.getElementById('scoreJobTitle').textContent=`${title} — ${co}`;document.getElementById('scoreTxt').innerHTML=`<p style="margin-bottom:8px">${r.analysis||''}</p><p style="font-family:var(--fm);font-size:10px;color:var(--green)">→ ${r.recommendation||''}</p><div style="margin-top:9px;display:flex;flex-wrap:wrap;gap:3px">${(r.matchedSkills||[]).map(s=>`<span class="sc m">${s}</span>`).join('')}${(r.missingSkills||[]).map(s=>`<span class="sc g">${s}</span>`).join('')}</div>`;document.getElementById('scoreResult').classList.add('show');scoredJob={title,company:co,jd,fitScore:r.fitScore,fitLevel:fl,analysis:r.analysis};document.getElementById('stS').textContent=parseInt(document.getElementById('stS').textContent||'0')+1}catch(e){toast('Score error: '+e.message)}finally{btn.classList.remove('ld');btn.disabled=false}}
+function clearScore(){['pTitle','pCo','pJD'].forEach(id=>{const el=document.getElementById(id);if(el)el.value=''});document.getElementById('scoreResult').classList.remove('show');scoredJob=null}
+function trackScored(){if(!scoredJob)return;const id='s'+Date.now();tracker[id]={title:scoredJob.title,company:scoredJob.company,platform:'Manual',url:'',date:new Date().toLocaleDateString()};localStorage.setItem('cie_tracker',JSON.stringify(tracker));prependTracker(tracker[id]);toast('Added to tracker');updStats()}
+async function scoreGenCover(){if(scoredJob)openCoverFor(scoredJob.title,scoredJob.company,scoredJob.jd.slice(0,2000),[])}
+async function genCover(id){const j=jobs.find(x=>x.id===id);if(!j)return;openCoverFor(j.title,j.company,j.summary||'',(j.matchedSkills||[]))}
+async function openCoverFor(title,company,ctx,skills){const key=getKey();if(!key){toast('API key required');return}const model=getModel();document.getElementById('mtitle').textContent=title;document.getElementById('msub').textContent=company;document.getElementById('mbody').textContent='⏳ Generating…';document.getElementById('mbody').className='mbody ld';document.getElementById('coverModal').classList.add('open');try{const resp=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01'},body:JSON.stringify({model,max_tokens:800,messages:[{role:'user',content:`Write a sharp executive cover letter.
+ROLE: ${title} at ${company}
+CONTEXT: ${ctx}
+MATCHED SKILLS: ${skills.join(', ')}
+HIGHLIGHTS:
+${R.bullets.map(b=>`• ${b}`).join('\n')}
+3 tight paragraphs. No "Dear Hiring Manager." Specific hook referencing ${company}. Match achievements to role. Call to action. Executive tone. No filler.`}]})});const raw=await resp.text();const d=safeJson(raw);const txt=(d.content||[]).filter(b=>b.type==='text').map(b=>b.text).join('');document.getElementById('mbody').textContent=txt||'Generation failed — check key/model.';document.getElementById('mbody').className='mbody'}catch(e){document.getElementById('mbody').textContent='Error: '+e.message;document.getElementById('mbody').className='mbody'}}
+function closeModal(){document.getElementById('coverModal').classList.remove('open')}
+function copyModal(){navigator.clipboard.writeText(document.getElementById('mbody').textContent).then(()=>toast('Copied!'))}
+document.getElementById('coverModal').addEventListener('click',e=>{if(e.target.id==='coverModal')closeModal()});
+function setSort(m){sortMode=m;['fit','co','plat'].forEach(k=>document.getElementById('sb-'+k)?.classList.toggle('on',k===m));renderResults()}
+function updStats(){document.getElementById('stT').textContent=jobs.length;document.getElementById('stH').textContent=jobs.filter(j=>j.fitLevel==='high').length;document.getElementById('stA').textContent=appliedIds.size}
+function prependTracker(j){const list=document.getElementById('trkList');const emp=list.querySelector('.tempty');if(emp)emp.remove();const el=document.createElement('div');el.className='titem';el.innerHTML=`<span class="ptag ${j.platform}">${j.platform}</span><span class="ttitle">${j.title} — ${j.company}</span><span class="tmeta">${j.date}</span>${j.url?`<a class="tlink" href="${j.url}" target="_blank" rel="noopener">↗</a>`:''}`;list.prepend(el);document.getElementById('trkCnt').textContent=Object.keys(tracker).length}
+function renderTracker(){const list=document.getElementById('trkList');const e=Object.entries(tracker);if(!e.length){list.innerHTML='<div class="tempty">No applications tracked yet.</div>'}else{list.innerHTML='';[...e].reverse().forEach(([,j])=>prependTracker(j))}document.getElementById('trkCnt').textContent=e.length}
+function clearTracker(){appliedIds.clear();tracker={};hiddenIds.clear();['cie_applied','cie_tracker','cie_hidden'].forEach(k=>localStorage.removeItem(k));renderTracker();renderResults();updStats();toast('Cleared')}
+function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3200)}
+function resetSearch(){jobs=[];hiddenIds.clear();localStorage.removeItem('cie_hidden');document.getElementById('resultsArea').innerHTML='<div class="empty"><div class="et">Reset</div><div class="eb">Click ⚡ Generate Leads to run again.</div></div>';document.getElementById('resCnt').textContent='0';document.getElementById('batchBtn').disabled=true;updStats()}
+</script>
+</body>
+</html>
